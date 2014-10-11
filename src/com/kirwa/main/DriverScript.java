@@ -51,7 +51,6 @@ public class DriverScript {
 		int stepcount = 0;
         int counter=1;
         DateTime startTime= new DateTime();
-        DateTime EndTime ;
         boolean tcresult = true;
 		while(steps.hasNext()){
 			Row step = steps.next();
