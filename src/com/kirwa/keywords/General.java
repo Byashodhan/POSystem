@@ -5,9 +5,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-
 import com.kirwa.main.MyDriver;
 
 public class General {
@@ -23,7 +20,6 @@ public class General {
 			//ToDo : Check if Application Launched
 			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -47,7 +43,6 @@ public class General {
 			return false;
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -68,7 +63,6 @@ public class General {
 				return false;
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -91,7 +85,6 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return false;
 				}
@@ -110,7 +103,6 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return false;
 				}
@@ -129,7 +121,7 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 					return false;
 				}
@@ -148,7 +140,6 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return false;
 				}
@@ -168,7 +159,7 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 					return false;
 				}
@@ -188,7 +179,6 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return false;
 				}
