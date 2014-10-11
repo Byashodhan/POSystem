@@ -14,6 +14,7 @@ import java.util.Date;
 public class Reporter {
 	static String reportName="";
 	static File reportFile = null;
+	public static boolean isError=false;
 	private static FileWriter fw=null;
 	private static BufferedWriter bw=null;
 	private static String tcstart ="",kwstart="";
@@ -38,15 +39,15 @@ public class Reporter {
     	kwstart="<table>";
     }
 
-    public static void endTC(DateTime startTime,DateTime EndTime,String result,String failcause) throws IOException {
-        bw.write(tcstart + "<td>"+Seconds.secondsBetween(startTime,EndTime).getSeconds()+"</td><td>"+result+"</td><td>"+failcause+"</td></tr><tr><td colspan='4'>"+kwstart+"</table></td></tr>");
+    public static void endTC(DateTime startTime,DateTime EndTime,String result,boolean failcause) throws IOException {
+        bw.write(tcstart + "<td>"+Seconds.secondsBetween(startTime,EndTime).getSeconds()+"</td><td>"+result+"</td><td>"+(failcause?"Script Failure":"")+"</td></tr><tr><td colspan='4'>"+kwstart+"</table></td></tr>");
     }
     
     public static void startKW(){
     	kwstart+="";
     }
-    public static void endKW(String name,DateTime startTime, DateTime EndTime, Boolean x){
-    	kwstart+="<tr class="+(x?"Pass":"Fail")+"><th>"+name+"</th><td>"+Seconds.secondsBetween(startTime,EndTime).getSeconds()+"</td><td>"+(x?"Pass":"Fail")+"</td><td>x</td></tr>";
+    public static void endKW(String name,DateTime startTime, DateTime EndTime, Boolean x,String errorCause){
+    	kwstart+="<tr class="+(x?"Pass":"Fail")+"><th>"+name+"</th><td>"+Seconds.secondsBetween(startTime,EndTime).getSeconds()+"</td><td>"+(x?"Pass":"Fail")+"</td><td>"+errorCause+"</td></tr>";
     }
     
 	public static void endReport() throws IOException{

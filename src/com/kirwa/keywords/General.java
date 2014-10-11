@@ -5,7 +5,9 @@ import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+
 import com.kirwa.main.MyDriver;
+import com.kirwa.utils.Reporter;
 
 public class General {
 	
@@ -20,6 +22,7 @@ public class General {
 			//ToDo : Check if Application Launched
 			return true;
 		} catch (Exception e) {
+			Reporter.isError=true;
 			e.printStackTrace();
 			return false;
 		}
@@ -43,6 +46,7 @@ public class General {
 			return false;
 			}
 		} catch (Exception e) {
+			Reporter.isError=true;
 			e.printStackTrace();
 			return false;
 		}
@@ -63,6 +67,7 @@ public class General {
 				return false;
 			}
 		} catch (Exception e) {
+			Reporter.isError=true;
 			e.printStackTrace();
 			return false;
 		}
@@ -85,6 +90,7 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
+					Reporter.isError=true;
 					e.printStackTrace();
 					return false;
 				}
@@ -103,6 +109,7 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
+					Reporter.isError=true;
 					e.printStackTrace();
 					return false;
 				}
@@ -121,7 +128,7 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
-
+					Reporter.isError=true;
 					e.printStackTrace();
 					return false;
 				}
@@ -140,6 +147,7 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
+					Reporter.isError=true;
 					e.printStackTrace();
 					return false;
 				}
@@ -159,7 +167,7 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
-
+					Reporter.isError=true;
 					e.printStackTrace();
 					return false;
 				}
@@ -179,6 +187,7 @@ public class General {
 					return false;
 					}
 				} catch (Exception e) {
+					Reporter.isError=true;
 					e.printStackTrace();
 					return false;
 				}
