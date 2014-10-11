@@ -1,86 +1,70 @@
 package com.kirwa.main;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Iterator;
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+import com.kirwa.utils.ExcelReader;
 import com.kirwa.utils.Reporter;
 
 import org.joda.time.DateTime;
 // Created By: Kirtesh Wani
 public class DriverScript {
 	static FileInputStream  file;// = new FileInputStream(new File("TestSuite.xlsx"));
-	static XSSFWorkbook workbook;// = new XSSFWorkbook(file);
+	static ExcelReader workbook;// = new XSSFWorkbook(file);
 	public static Logger LOGGER = Logger.getLogger(DriverScript.class);
 	public static void main(String[] args) throws Exception{
-		file = new FileInputStream(new File("TestSuite.xlsx"));
-		workbook = new XSSFWorkbook(file);
-		XSSFSheet sheet = workbook.getSheet("Main");
-		Iterator<Row> MySuites = sheet.rowIterator();
-		MySuites.next();
-		
-		while(MySuites.hasNext()){
-			Row suite = MySuites.next();
-			
-			if(suite.getCell(1).getBooleanCellValue())
-			{	Reporter.startReport(suite.getCell(0).getStringCellValue());
-				LOGGER.debug("Executing Test Suite" + suite.getCell(0).getStringCellValue());
-				ExecuteTestSuite(suite.getCell(0).getStringCellValue());
+		workbook = new ExcelReader("TestSuite.xlsx");
+		for(int i=1;i<workbook.getRowCount("Main");i++){
+			if(workbook.getCellStringData("Main", i, 1).toLowerCase().equals("true")){	
+				Reporter.startReport(workbook.getCellStringData("Main",i,0));
+				LOGGER.debug("Executing Test Suite" + workbook.getCellStringData("Main",i,0));
+				ExecuteTestSuite(workbook.getCellStringData("Main",i,0));
 				Reporter.endReport();
 			}
 		}
 		MyDriver.driver.quit();
-		file.close();
+		workbook.close();
 	}
 
 	private static void ExecuteTestSuite(String SuiteName) throws Exception {
-		XSSFSheet tcSheet = workbook.getSheet(SuiteName);
-		Iterator<Row> steps = tcSheet.iterator();
-		steps.next();
 		String testCaseId="";
 		String temtestcaseid = "";
 		int stepcount = 0;
         int counter=1;
         DateTime startTime= new DateTime();
         boolean tcresult = true;
-		while(steps.hasNext()){
-			Row step = steps.next();
+		for(int i =1;i<workbook.getRowCount(SuiteName);i++){
 			if(stepcount==0){
-				testCaseId= step.getCell(0).getStringCellValue();
-				LOGGER.debug("TestCase Started : " + step.getCell(1).getStringCellValue());
+				testCaseId= workbook.getCellStringData(SuiteName, i, 0);
+				LOGGER.debug("TestCase Started : " + workbook.getCellStringData(SuiteName, i, 1));
                 tcresult=true;
-				Reporter.startTC(Integer.toString(counter++),step.getCell(1).getStringCellValue());
+				Reporter.startTC(Integer.toString(counter++), workbook.getCellStringData(SuiteName, i, 1));
                 startTime = new DateTime();
 			}
 			else{
-				if(!step.getCell(0).getStringCellValue().equals(temtestcaseid)){
-					testCaseId= step.getCell(0).getStringCellValue();
+				if(! workbook.getCellStringData(SuiteName, i, 0).equals(temtestcaseid)){
+					testCaseId=  workbook.getCellStringData(SuiteName, i, 0);
 					MyDriver.driver.quit();
                     Reporter.endTC(startTime,new DateTime(),tcresult?"Pass":"Fail","");
                     LOGGER.info("TestCase Ended with " + tcresult);
-                    LOGGER.debug("TestCase Started : " + step.getCell(1).getStringCellValue());
+                    LOGGER.debug("TestCase Started : " +  workbook.getCellStringData(SuiteName, i, 1));
                     tcresult=true;
 
-                    Reporter.startTC(Integer.toString(counter++), step.getCell(1).getStringCellValue());
+                    Reporter.startTC(Integer.toString(counter++),  workbook.getCellStringData(SuiteName, i, 1));
                     startTime = new DateTime();;
 				}
 
 			}
 			HashMap<String,String> inputList = new HashMap<String,String>();
 			try{
-				String[] inputs = step.getCell(4).getStringCellValue().split(",");
+				String[] inputs =  workbook.getCellStringData(SuiteName, i, 4).split(",");
 				
-				for(int i = 8;i<8+inputs.length;i++){
-					inputList.put(inputs[i-8],step.getCell(i).getStringCellValue());
+				for(int i1 = 8;i1<8+inputs.length;i1++){
+					inputList.put(inputs[i1-8], workbook.getCellStringData(SuiteName, i, i1));
 				}
 			}catch(Exception e){LOGGER.debug("Keyword not need inputs ");}
-			tcresult &= ExecuteKeyWord(step.getCell(3).getStringCellValue(),inputList);
+			tcresult &= ExecuteKeyWord( workbook.getCellStringData(SuiteName, i, 3),inputList);
 			temtestcaseid = testCaseId;
 			stepcount++;
 
@@ -90,18 +74,13 @@ public class DriverScript {
 	}
 
 	private static boolean ExecuteKeyWord(String KeyWord,HashMap<String,String> inputList) throws Exception {
-		XSSFSheet kwSheet = workbook.getSheet("Keywords");
-		Iterator<Row> keywords = kwSheet.iterator();
-		keywords.next();
-		while(keywords.hasNext()){
-			Row kwrow = keywords.next();
-			
-			if(kwrow.getCell(0).getStringCellValue().equals(KeyWord)){
+		for(int i=1;i<workbook.getRowCount("Keywords");i++){
+			if(workbook.getCellStringData("Keywords", i, 0).equals(KeyWord)){
                 LOGGER.debug("Started Keyword" + KeyWord);
                 DateTime kwst = new DateTime();
                 Reporter.startKW();
-				Class<?> cl = Class.forName(kwrow.getCell(1).getStringCellValue());
-				Method m = cl.getMethod(kwrow.getCell(0).getStringCellValue(),inputList.getClass());
+				Class<?> cl = Class.forName(workbook.getCellStringData("Keywords", i,1));
+				Method m = cl.getMethod( workbook.getCellStringData("Keywords", i, 0),inputList.getClass());
 				Object x = m.invoke(m, inputList);
                 LOGGER.info("Keyword Ended with " + x.toString());
                 Reporter.endKW(KeyWord,kwst,new DateTime(),(Boolean) x);
@@ -109,7 +88,6 @@ public class DriverScript {
 			}
 		}
         LOGGER.debug("Keyword not found" + KeyWord);
-       // LOGGER.info("Keyword Ended with " + false);
 		return false;
 	}
 	
