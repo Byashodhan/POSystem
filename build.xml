@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<project name="Services Automation" default="clean.run">
+	<property file="build.properties"/>
+	<target name="info">
+		<echo>***********************************************************************************************************************</echo>
+		<echo>***********************************************************************************************************************</echo>
+		<echo>********************************************** Starting Automation ****************************************************</echo>
+		<echo>***********************************************************************************************************************</echo>
+		<echo>***********************************************************************************************************************</echo>
+	</target>
+	<target name="clean">
+		<delete dir="${build}"/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${classes}"/>
+		<mkdir dir="${jars}"/>
+	</target>
+	<target name="init">
+		<path id="dependacies">
+			<fileset dir="lib">
+				<filename name="**/*.jar"/>
+			</fileset>
+			<fileset dir="libpoi">
+				<filename name="**/*.jar"/>
+			</fileset>
+			<fileset dir="libsel">
+				<filename name="**/*.jar"/>
+			</fileset>
+		</path>
+	</target>
+	<target name="compile" depends="info,clean,init">
+		<echo>*********************************************Comiling the Code*********************************************************</echo>
+		<javac srcdir="${source}" destdir="${classes}">
+			<classpath refid="dependacies" />
+		</javac>
+		<copy todir="${classes}">  
+		   <fileset dir="${source}"   
+		    excludes="**/*.java"/>  
+		</copy> 
+	</target>
+	<target name="build" depends="compile">
+		<echo>*********************************************Creating JAR File*********************************************************</echo>
+		<jar jarfile="${jars}/POTest.jar">
+            <fileset dir ="${classes}">
+                <include name="**/*" />
+            </fileset>
+        </jar>
+	</target>
+	<target name="run" depends="info,init">
+		<path id="newjar">
+			 <fileset dir="${jars}"/> 
+		</path>
+		<java classname="com.kirwa.main.DriverScript">
+			<classpath refid="dependacies"/>
+			<classpath refid="newjar"/>
+		</java>
+	</target>
+	<target name="clean.run" depends="build,run">
+		
+	</target>
+</project>
