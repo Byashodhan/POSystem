@@ -42,12 +42,12 @@
 	<classpathentry kind="lib" path="libsel/xercesImpl-2.11.0.jar"/>
 	<classpathentry kind="lib" path="libsel/xml-apis-1.4.01.jar"/>
 	<classpathentry kind="lib" path="libsel/mysql-connector-java-5.0.8-bin.jar"/>
-	<classpathentry kind="lib" path="libpoi/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="libpoi/poi-3.9-20121203.jar"/>
 	<classpathentry kind="lib" path="libpoi/poi-ooxml-3.9-20121203.jar"/>
 	<classpathentry kind="lib" path="libpoi/poi-ooxml-schemas-3.9-20121203.jar"/>
 	<classpathentry kind="lib" path="libpoi/xmlbeans-2.3.0.jar"/>
-	<classpathentry kind="lib" path="libpoi/joda-time-2.4.jar"/>
-	<classpathentry kind="lib" path="libpoi/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/joda-time-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
