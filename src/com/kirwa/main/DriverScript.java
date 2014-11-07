@@ -1,6 +1,5 @@
 package com.kirwa.main;
 
-import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
@@ -13,7 +12,7 @@ import org.joda.time.DateTime;
  *
  ************/
 public class DriverScript {
-	static FileInputStream  file;// = new FileInputStream(new File("TestSuite.xlsx"));
+	//static FileInputStream  file;// = new FileInputStream(new File("TestSuite.xlsx"));
 	static ExcelReader workbook;// = new XSSFWorkbook(file);
 	public static Logger LOGGER = Logger.getLogger(DriverScript.class);
 	public static boolean tcError = false;
@@ -27,6 +26,7 @@ public class DriverScript {
 				Reporter.endReport();
 			}
 		}
+		if (MyDriver.driver!=null)
 		MyDriver.driver.quit();
 		workbook.close();
 	}
@@ -34,6 +34,7 @@ public class DriverScript {
 	private static void ExecuteTestSuite(String SuiteName) throws Exception {
 		String testCaseId="";
 		String temtestcaseid = "";
+		boolean executetest=true;
 		int stepcount = 0;
         int counter=1;
         DateTime startTime= new DateTime();
@@ -41,8 +42,12 @@ public class DriverScript {
 		for(int i =1;i<workbook.getRowCount(SuiteName);i++){
 			if(stepcount==0){
 				testCaseId= workbook.getCellStringData(SuiteName, i, 0);
-				LOGGER.debug("TestCase Started : " + workbook.getCellStringData(SuiteName, i, 1));
-                tcresult=true;
+				executetest = workbook.getCellStringData(SuiteName, i, 1).toUpperCase().equals("Y")?true:false;
+				if(!executetest)
+                	LOGGER.warn("TestCase Marked for Skip " + workbook.getCellStringData(SuiteName, i, 1));
+                else
+                	LOGGER.debug("TestCase Started : " +  workbook.getCellStringData(SuiteName, i, 1));
+				tcresult=true;
                 tcError=false;
 				Reporter.startTC(Integer.toString(counter++), workbook.getCellStringData(SuiteName, i, 1));
                 startTime = new DateTime();
@@ -50,10 +55,15 @@ public class DriverScript {
 			else{
 				if(! workbook.getCellStringData(SuiteName, i, 0).equals(temtestcaseid)){
 					testCaseId=  workbook.getCellStringData(SuiteName, i, 0);
+					if (MyDriver.driver!=null)
 					MyDriver.driver.quit();
                     Reporter.endTC(startTime,new DateTime(),tcresult?"Pass":"Fail",tcError);
                     LOGGER.info("TestCase Ended with " + tcresult);
-                    LOGGER.debug("TestCase Started : " +  workbook.getCellStringData(SuiteName, i, 1));
+                    executetest = workbook.getCellStringData(SuiteName, i, 1).toUpperCase().equals("Y")?true:false;
+                    if(!executetest)
+                    	LOGGER.warn("TestCase Marked for Skip " + workbook.getCellStringData(SuiteName, i, 1));
+                    else
+                    	LOGGER.debug("TestCase Started : " +  workbook.getCellStringData(SuiteName, i, 1));
                     tcresult=true;
                     tcError =false;
                     Reporter.startTC(Integer.toString(counter++),  workbook.getCellStringData(SuiteName, i, 1));
@@ -67,7 +77,10 @@ public class DriverScript {
 					inputList.put(inputs[i1-8], workbook.getCellStringData(SuiteName, i, i1));
 				}
 			}catch(Exception e){LOGGER.debug("Keyword not need inputs ");}
-			tcresult &= ExecuteKeyWord(workbook.getCellStringData(SuiteName, i, 3),inputList,Boolean.getBoolean(workbook.getCellStringData(SuiteName, i, 5)));
+			if(executetest)
+				tcresult &= ExecuteKeyWord(workbook.getCellStringData(SuiteName, i, 3),inputList,Boolean.getBoolean(workbook.getCellStringData(SuiteName, i, 5)));
+			else
+				LOGGER.warn("Testcase marked for Skip so Skipping keyword \"" + workbook.getCellStringData(SuiteName, i, 3) +"\"");
 			temtestcaseid = testCaseId;
 			stepcount++;
 		}
@@ -88,7 +101,7 @@ public class DriverScript {
                 LOGGER.info("Keyword Ended with " + x.toString());
                 Reporter.endKW(KeyWord,kwst,new DateTime(),(Boolean) x,Reporter.isError?"Script Failure":"");
                 tcError |= Expected;
-                return (Boolean) x & Expected;
+                return (Boolean) x == Expected;
 			}
 		}
         LOGGER.debug("Keyword not found" + KeyWord);
